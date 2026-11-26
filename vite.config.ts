@@ -23,7 +23,6 @@ export default defineConfig({
         manualChunks: {
           vendor: ['react', 'react-dom', 'react-router-dom'],
           query: ['@tanstack/react-query'],
-          pdf: ['pdfjs-dist'],
         },
       },
     },
