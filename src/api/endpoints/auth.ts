@@ -47,6 +47,26 @@ export const authApi = {
     return data;
   },
 
+  /** Always returns a generic message, so the response never reveals whether the email exists. */
+  requestPasswordReset: async (email: string): Promise<MessageResponse> => {
+    const { data } = await api.post<MessageResponse>(
+      `${AUTH}/password-reset/request`,
+      { email },
+      { skipAuth: true },
+    );
+    return data;
+  },
+
+  /** Consumes the emailed token and revokes every existing session for the account. */
+  confirmPasswordReset: async (token: string, newPassword: string): Promise<MessageResponse> => {
+    const { data } = await api.post<MessageResponse>(
+      `${AUTH}/password-reset/confirm`,
+      { token, newPassword },
+      { skipAuth: true },
+    );
+    return data;
+  },
+
   me: async (): Promise<User> => {
     const { data } = await api.get<User>(`${AUTH}/me`);
     return data;
