@@ -16,6 +16,12 @@ const RegisterPage = lazy(() =>
 const VerifyEmailPage = lazy(() =>
   import('@/pages/auth/VerifyEmailPage').then((m) => ({ default: m.VerifyEmailPage })),
 );
+const ForgotPasswordPage = lazy(() =>
+  import('@/pages/auth/ForgotPasswordPage').then((m) => ({ default: m.ForgotPasswordPage })),
+);
+const ResetPasswordPage = lazy(() =>
+  import('@/pages/auth/ResetPasswordPage').then((m) => ({ default: m.ResetPasswordPage })),
+);
 const CommunitySelectPage = lazy(() =>
   import('@/pages/auth/CommunitySelectPage').then((m) => ({ default: m.CommunitySelectPage })),
 );
@@ -38,6 +44,8 @@ export default function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/verify-email" element={<VerifyEmailPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
 
           {/* Signed in */}
           <Route element={<RequireAuth />}>
