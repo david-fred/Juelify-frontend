@@ -43,8 +43,8 @@ export function LoginPage() {
             role="alert"
             className={`rounded-xl border px-4 py-3 text-sm ${
               error
-                ? 'bg-red-500/10 border-red-500/30 text-red-400'
-                : 'bg-amber-500/10 border-amber-500/30 text-amber-400'
+                ? 'border-red-500/30 bg-red-500/10 text-red-400'
+                : 'border-amber-500/30 bg-amber-500/10 text-amber-400'
             }`}
           >
             {message}
@@ -64,37 +64,44 @@ export function LoginPage() {
           />
         </Field>
 
-        <Field id="password" label="Password">
-          <div className="relative">
-            <input
-              id="password"
-              type={showPassword ? 'text' : 'password'}
-              autoComplete="current-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              placeholder="••••••••"
-              className={`${inputClass} pr-11`}
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword((v) => !v)}
-              aria-label={showPassword ? 'Hide password' : 'Show password'}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary transition"
-            >
-              {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-            </button>
+        <div>
+          <Field id="password" label="Password">
+            <div className="relative">
+              <input
+                id="password"
+                type={showPassword ? 'text' : 'password'}
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                placeholder="••••••••"
+                className={`${inputClass} pr-11`}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((v) => !v)}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted transition hover:text-text-primary"
+              >
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
+          </Field>
+          <div className="mt-2 text-right">
+            <Link to="/forgot-password" className="text-xs font-medium text-brand-400 transition hover:text-brand-300">
+              Forgot password?
+            </Link>
           </div>
-        </Field>
+        </div>
 
         <Button type="submit" loading={isLoading} className="w-full" size="lg">
           Sign in
         </Button>
       </form>
 
-      <p className="text-center text-sm text-text-muted mt-6">
+      <p className="mt-6 text-center text-sm text-text-muted">
         New here?{' '}
-        <Link to="/register" className="text-brand-400 hover:text-brand-300 font-medium transition">
+        <Link to="/register" className="font-medium text-brand-400 transition hover:text-brand-300">
           Create an account
         </Link>
       </p>
