@@ -1,13 +1,12 @@
-import type { Community } from './community.types';
+export type AccountStatus = 'active' | 'suspended' | 'deactivated';
 
+/** Mirrors identity.schemas.UserResponse. avatarUrl is not returned by the backend yet. */
 export interface User {
   id: string;
-  email: string;
   fullName: string;
-  matricId?: string;
+  email: string;
+  status: AccountStatus;
   avatarUrl?: string;
-  phone?: string;
-  createdAt: string;
 }
 
 export interface LoginPayload {
@@ -15,21 +14,30 @@ export interface LoginPayload {
   password: string;
 }
 
+/** Mirrors identity.schemas.RegisterRequest. The backend rejects unknown fields with 422. */
 export interface RegisterPayload {
-  email: string;
-  password: string;
   fullName: string;
-  matricId?: string;
-  phone?: string;
+  email: string;
+  /** At least 12 characters (backend minimum). */
+  password: string;
 }
 
-export interface AuthResponse {
-  user: User;
-  token: string;
-  permissions: Permission[];
-  communities: Community[];
+/** Mirrors identity.schemas.BrowserTokenResponse. The refresh token never reaches JavaScript. */
+export interface BrowserTokenResponse {
+  accessToken: string;
+  csrfToken: string;
+  tokenType: 'bearer';
 }
 
+export interface CsrfResponse {
+  csrfToken: string;
+}
+
+export interface MessageResponse {
+  message: string;
+}
+
+/** Placeholder until the backend returns per-user permissions. */
 export interface Permission {
   subject: string;
   action: string;
