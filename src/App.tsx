@@ -13,6 +13,9 @@ const LoginPage = lazy(() =>
 const RegisterPage = lazy(() =>
   import('@/pages/auth/RegisterPage').then((m) => ({ default: m.RegisterPage })),
 );
+const VerifyEmailPage = lazy(() =>
+  import('@/pages/auth/VerifyEmailPage').then((m) => ({ default: m.VerifyEmailPage })),
+);
 const CommunitySelectPage = lazy(() =>
   import('@/pages/auth/CommunitySelectPage').then((m) => ({ default: m.CommunitySelectPage })),
 );
@@ -31,9 +34,12 @@ export default function App() {
     <BrowserRouter>
       <Suspense fallback={<RouteFallback />}>
         <Routes>
+          {/* Public */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/verify-email" element={<VerifyEmailPage />} />
 
+          {/* Signed in */}
           <Route element={<RequireAuth />}>
             <Route path="/select-community" element={<CommunitySelectPage />} />
 
