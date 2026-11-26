@@ -1,19 +1,27 @@
-export type CommunityType = 'department' | 'hostel' | 'estate' | 'club' | 'other';
+/** Values accepted by communities.schemas.CommunityCreateRequest. */
+export type CommunityType = 'general' | 'department' | 'lodge' | 'association';
 
+export type CommunityStatus = 'active' | 'suspended' | 'archived' | 'pending_deletion';
+
+/** Mirrors communities.schemas.CommunityResponse after camelCase conversion. */
 export interface Community {
   id: string;
   name: string;
-  description: string;
-  type: CommunityType;
-  memberCount: number;
-  avatarUrl?: string;
-  createdAt: string;
+  slug: string;
+  description: string | null;
+  communityType: CommunityType;
+  status: CommunityStatus;
+  version: number;
 }
 
-export interface Membership {
-  id: string;
-  userId: string;
-  communityId: string;
-  role: 'admin' | 'member';
-  joinedAt: string;
+export interface CreateCommunityPayload {
+  name: string;
+  description?: string;
+  communityType: CommunityType;
+}
+
+export interface UpdateCommunityPayload {
+  expectedVersion: number;
+  name?: string;
+  description?: string | null;
 }
