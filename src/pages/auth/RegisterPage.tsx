@@ -1,22 +1,31 @@
 import { useState, type FormEvent } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { isAxiosError } from 'axios';
 import { useAuthStore } from '@/stores/authStore';
 import { Button } from '@/components/ui/Button';
 import { AuthLayout, Field, inputClass } from './AuthLayout';
 
-const MIN_PASSWORD_LENGTH = 8;
+// Must match identity.schemas.RegisterRequest (password min_length=12).
+const MIN_PASSWORD_LENGTH = 12;
+
+function messageFromError(error: unknown): string {
+  const status = isAxiosError(error) ? error.response?.status : undefined;
+  if (status === 422) {
+    return `Check your details. Your password needs at least ${MIN_PASSWORD_LENGTH} characters.`;
+  }
+  if (status === 429) return 'Too many attempts. Please wait a while and try again.';
+  return 'Could not create your account. Please try again.';
+}
 
 export function RegisterPage() {
-  const navigate = useNavigate();
   const register = useAuthStore((s) => s.register);
-  const isLoading = useAuthStore((s) => s.isLoading);
 
   const [fullName, setFullName] = useState('');
-  const [matricId, setMatricId] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [sentMessage, setSentMessage] = useState<string | null>(null);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -27,17 +36,32 @@ export function RegisterPage() {
       return;
     }
 
+    setSubmitting(true);
     try {
-      await register(email, password, fullName.trim(), matricId.trim() || undefined);
-      navigate('/feed', { replace: true });
+      const response = await register({ fullName: fullName.trim(), email, password });
+      setSentMessage(response.message);
     } catch (err) {
-      setError(
-        isAxiosError(err) && err.response?.status === 409
-          ? 'An account with this email already exists.'
-          : 'Could not create your account. Please try again.',
-      );
+      setError(messageFromError(err));
+    } finally {
+      setSubmitting(false);
     }
   };
+
+  if (sentMessage) {
+    return (
+      <AuthLayout title="Check your email" subtitle="One more step to activate your account">
+        <div className="space-y-3 rounded-2xl border border-surface-border bg-surface-raised p-5 text-sm text-text-secondary">
+          <p>{sentMessage}</p>
+          <p>The verification link expires in 30 minutes.</p>
+        </div>
+        <p className="text-center text-sm text-text-muted mt-6">
+          <Link to="/login" className="text-brand-400 hover:text-brand-300 font-medium transition">
+            Back to sign in
+          </Link>
+        </p>
+      </AuthLayout>
+    );
+  }
 
   return (
     <AuthLayout title="Create your account" subtitle="Join your department, hostel or estate">
@@ -53,19 +77,10 @@ export function RegisterPage() {
             id="fullName"
             type="text"
             autoComplete="name"
+            minLength={2}
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
             required
-            className={inputClass}
-          />
-        </Field>
-
-        <Field id="matricId" label="Matric / staff ID (optional)">
-          <input
-            id="matricId"
-            type="text"
-            value={matricId}
-            onChange={(e) => setMatricId(e.target.value)}
             className={inputClass}
           />
         </Field>
@@ -82,20 +97,20 @@ export function RegisterPage() {
           />
         </Field>
 
-        <Field id="password" label="Password">
+        <Field id="password" label={`Password (min ${MIN_PASSWORD_LENGTH} characters)`}>
           <input
             id="password"
             type="password"
             autoComplete="new-password"
+            minLength={MIN_PASSWORD_LENGTH}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            minLength={MIN_PASSWORD_LENGTH}
             className={inputClass}
           />
         </Field>
 
-        <Button type="submit" loading={isLoading} className="w-full" size="lg">
+        <Button type="submit" loading={submitting} className="w-full" size="lg">
           Create account
         </Button>
       </form>
